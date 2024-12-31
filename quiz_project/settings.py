@@ -12,23 +12,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-jxoru$q=)+-omzi-us3wnlt2v(sj11qwt9i+$*@y&gs5%-o&u^'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['Python-app.onrender.com']
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -38,12 +29,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'quiz',
-    'django.contrib.sites',  # Required for allauth
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',  # Google provider
-    'allauth.socialaccount.providers.linkedin_oauth2',  # LinkedIn provider
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.linkedin_oauth2',
 ]
 
 SITE_ID = 1
@@ -52,13 +43,12 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
-ACCOUNT_EMAIL_VERIFICATION = 'none'  # Change as per your requirement
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-LOGIN_REDIRECT_URL = '/'  # Redirect to your home or desired URL after login
+LOGIN_REDIRECT_URL = 'exam'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'login'
 
-
-LOGIN_REDIRECT_URL = 'exam'  # Change to your exam URL
-ACCOUNT_LOGOUT_REDIRECT_URL = 'login' 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -70,6 +60,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -99,77 +90,35 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'quiz_project.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-import os
 import dj_database_url
-
-# Use PostgreSQL if the DATABASE_URL is set, else default to SQLite for local development
+WSGI_APPLICATION = 'quiz_project.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://USER:PASS@HOST:PORT/DBNAME'  # Replace with actual PostgreSQL URL in production
+        default='postgres://USER:PASS@HOST:PORT/DBNAME'
     ) if os.environ.get('DATABASE_URL') else {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 APPEND_SLASH = False
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# settings.py
-
-# Define the session cookie name for the regular site
 SESSION_COOKIE_NAME = 'exam_sessionid'
-
-# Separate session cookie for admin
 ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'
