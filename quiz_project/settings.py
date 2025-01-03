@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-jxoru$q=)+-omzi-us3wnlt2v(sj11qwt9i+$*@y&gs5%-o&u^'
 
-DEBUG = True
+DEBUG = False 
 
 ALLOWED_HOSTS = ['python-app-erkp.onrender.com', 'localhost', '127.0.0.1']
 
