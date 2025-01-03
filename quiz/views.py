@@ -592,11 +592,11 @@ import cv2
 import numpy as np
 from django.http import JsonResponse
 
-net = cv2.dnn.readNet("templates/quiz/yolov4-tiny.weights", "templates/quiz/yolov4-tiny.cfg")
+net = cv2.dnn.readNet("quiz/templates/quiz/yolov4-tiny.weights", "quiz/templates/quiz/yolov4-tiny.cfg")
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
 classes = []  # Load your class names from the file
-with open("templates/quiz/coco.names", "r") as f:
+with open("quiz/templates/quiz/coco.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
 
 # Your view function to handle POST requests
