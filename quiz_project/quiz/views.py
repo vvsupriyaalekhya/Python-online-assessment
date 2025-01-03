@@ -526,7 +526,7 @@ def exam_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def capture_view(request):
     return render(request, 'quiz/capture.html')
 
