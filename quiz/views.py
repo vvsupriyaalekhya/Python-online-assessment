@@ -537,7 +537,7 @@ import numpy as np
 from io import BytesIO
 from PIL import Image
 
-net = cv2.dnn.readNet("templates/quiz/yolov4-tiny.weights", "templates/quiz/yolov4-tiny.cfg")
+net = cv2.dnn.readNet("quiz/templates/quiz/yolov4-tiny.weights", "quiz/templates/quiz/yolov4-tiny.cfg")
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
 
