@@ -125,3 +125,4 @@ Werkzeug==3.0.3
 whitenoise==6.8.2
 xhtml2pdf==0.2.16
 zopfli==0.2.3.post1
+opencv-python-headless==4.10.0
