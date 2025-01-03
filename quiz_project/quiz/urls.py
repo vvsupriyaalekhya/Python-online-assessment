@@ -17,7 +17,7 @@ from .views import (
     thank_you_view,
     generate_pdf,
     logout_view,
-    capture_view,\
+    capture_view,
     detect_objects_view,
 )
 
