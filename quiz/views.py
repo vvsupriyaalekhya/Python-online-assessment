@@ -481,6 +481,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.db import IntegrityError
+from .models import User  # Assuming you have a custom User model
 
 def login_view(request):
     if request.method == "POST":
@@ -488,19 +493,15 @@ def login_view(request):
         password = request.POST.get('password')
         email = request.POST.get('email')  # Get email from form
 
+        # Try authenticating the user
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-
             login(request, user)  # Log the user in
             return redirect('exam')  # Redirect to the exam page
         else:
-
             try:
-                existing_user = User.objects.get(username=username)
-                messages.error(request, 'Username already exists. Please choose a different username.')  # User already exists
-            except User.DoesNotExist:
-                # Handle the case where the user doesn't exist and create a new user
+                # Try to create a new user if the username doesn't exist
                 new_user = User(username=username, email=email)  # Save the email
                 new_user.set_password(password)  # Hash the password
                 new_user.save()  # Save the new user
@@ -513,7 +514,11 @@ def login_view(request):
                 else:
                     messages.error(request, 'Error during registration or authentication. Please try again.')
 
+            except IntegrityError:
+                messages.error(request, 'Username already exists. Please choose a different username.')  # User already exists
+
     return render(request, 'quiz/login.html')
+
 
 @login_required(login_url='login')
 def exam_view(request):
