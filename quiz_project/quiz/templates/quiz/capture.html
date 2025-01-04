@@ -189,43 +189,43 @@
         }
 
         function checkNetworkSpeed() {
-    return new Promise((resolve, reject) => {
-        let startTime = Date.now();
-        let downloadSize = 500000;
-        let downloadUrl = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png";
-        let img = new Image();
-        img.onload = () => {
-            let endTime = Date.now();
-            let duration = (endTime - startTime) / 1000;
-            let fileSizeInBits = downloadSize * 8;
-            let speedInBps = fileSizeInBits / duration;
-            let speedInMbps = speedInBps / (1024 * 1024);
+            return new Promise((resolve, reject) => {
+                let startTime = Date.now();
+                let downloadSize = 500000;
+                let downloadUrl = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png";
+                let img = new Image();
+                img.onload = () => {
+                    let endTime = Date.now();
+                    let duration = (endTime - startTime) / 1000;
+                    let fileSizeInBits = downloadSize * 8;
+                    let speedInBps = fileSizeInBits / duration;
+                    let speedInMbps = speedInBps / (1024 * 1024);
 
-            if (speedInMbps >= 5) {
-                updateProgressBar(100, speedInMbps);
-                resolve();
-            } else {
-                updateProgressBar(100, 5.00); // Set network speed to 5.00 Mbps when it's below the threshold
-                reject("Network speed is below 5 Mbps.");
-            }
-        };
-        img.onerror = () => {
-            updateProgressBar(100, 5.00); // Set network speed to 5.00 Mbps if there's an error in measuring
-            reject("Failed to measure network speed.");
-        };
-        img.src = downloadUrl;
+                    if (speedInMbps >= 5) {
+                        updateProgressBar(100, speedInMbps);
+                        resolve();
+                    } else {
+                        updateProgressBar(100, 5.00); // Set network speed to 5.00 Mbps when it's below the threshold
+                        reject("Network speed is below 5 Mbps.");
+                    }
+                };
+                img.onerror = () => {
+                    updateProgressBar(100, 5.00); // Set network speed to 5.00 Mbps if there's an error in measuring
+                    reject("Failed to measure network speed.");
+                };
+                img.src = downloadUrl;
 
-        let progress = 0;
-        const interval = setInterval(() => {
-            if (progress < 100) {
-                progress += 10;
-                updateProgressBar(progress, 0);
-            } else {
-                clearInterval(interval);
-            }
-        }, 300);
-    });
-}
+                let progress = 0;
+                const interval = setInterval(() => {
+                    if (progress < 100) {
+                        progress += 10;
+                        updateProgressBar(progress, 0);
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 300);
+            });
+        }
 
         function updateProgressBar(percentage, speedInMbps) {
             const progressBar = document.getElementById('networkProgressBar');
@@ -287,13 +287,17 @@
             const stream = videoElement.srcObject;
             const tracks = stream.getTracks();
             tracks.forEach(track => track.stop());
+
+            document.getElementById('captureBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
         }
 
         function nextPage() {
-            window.location.href = '/exam/';
+            // Proceed to next step or page
+            alert("Proceeding to the next step.");
         }
 
-        // Start the video on page load
+        // Start video capture when page loads
         startVideo();
     </script>
 </body>
