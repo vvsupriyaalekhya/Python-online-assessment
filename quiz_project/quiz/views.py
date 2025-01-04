@@ -480,7 +480,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Users
 
 def login_view(request):
     if request.method == "POST":
@@ -492,12 +492,12 @@ def login_view(request):
 
         if user is not None:
 
-            login(request, user)  # Log the user in
+            login(request, users)  # Log the user in
             return redirect('exam')  # Redirect to the exam page
         else:
 
             try:
-                existing_user = User.objects.get(username=username)
+                existing_user = Users.objects.get(username=username)
                 messages.error(request, 'Username already exists. Please choose a different username.')  # User already exists
             except User.DoesNotExist:
                 # Handle the case where the user doesn't exist and create a new user
