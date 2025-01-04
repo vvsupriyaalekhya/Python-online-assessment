@@ -481,23 +481,23 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import Users
-
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')  # Get email from form
 
+        # Authenticate the user
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-
-            login(request, users)  # Log the user in
-            return redirect('exam')  # Redirect to the exam page
+            # User exists and password is correct
+            login(request, user)  # Log the user in
+            return redirect('capture')  # Redirect to the exam page
         else:
-
+            # Check if the username already exists
             try:
-                existing_user = Users.objects.get(username=username)
+                existing_user = User.objects.get(username=username)
                 messages.error(request, 'Username already exists. Please choose a different username.')  # User already exists
             except User.DoesNotExist:
                 # Handle the case where the user doesn't exist and create a new user
@@ -509,7 +509,7 @@ def login_view(request):
                 new_user = authenticate(request, username=username, password=password)
                 if new_user is not None:
                     login(request, new_user)  # Log in the newly created user
-                    return redirect('exam')  # Redirect to the exam page
+                    return redirect('capture')  # Redirect to the exam page
                 else:
                     messages.error(request, 'Error during registration or authentication. Please try again.')
 
