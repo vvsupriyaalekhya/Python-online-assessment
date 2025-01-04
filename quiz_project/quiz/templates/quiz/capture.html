@@ -77,13 +77,10 @@
         }
 
         #networkProgressLabel {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             font-size: 14px;
             color: white;
             font-weight: bold;
+            margin-top: 5px;
         }
 
         #videoElement {
@@ -144,8 +141,8 @@
         <!-- Progress Bar for Network Speed Checking -->
         <div id="networkProgress">
             <div id="networkProgressBar"></div>
-            <div id="networkProgressLabel">0 Mbps</div> <!-- Added label to show speed -->
         </div>
+        <div id="networkProgressLabel">0 Mbps</div> <!-- Moved label below the bar -->
 
         <!-- Video Stream for Image Capture -->
         <div style="position: relative;">
