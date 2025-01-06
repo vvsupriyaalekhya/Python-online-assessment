@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +6,30 @@
     <title>Test</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        #videoContainer {
+        position: fixed; /* Fixes the container in place */
+        top: 70px; /* Space from the top */
+        right:10px; /* Space from the right */
+        width: 150px; /* Set the width of the container */
+        height: 150px; /* Set the height of the container */
+        z-index: 9999; /* Makes sure the container stays on top */
+        }
+
+        #video, #canvas {
+            position: absolute;
+            transform: scale(0.25); /* Scale down to fit the box */
+            transform-origin: top left; /* Ensure scaling starts from top-left */
+            width: 600px; /* Original width */
+            height: 600px; /* Original height */
+        }
+        .detection-container {
+            position: relative;
+            width: 30px; /* Small box width */
+            height: 30px; /* Small box height */
+            margin-right: 1px; /* Add some space from the edge */
+            border: 1px solid #ccc; /* Optional: Add border for clarity */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better appearance */
+        }
         body {
             font-family: 'Times New Roman', Times, serif;
             background-color: #f4f4f4;
@@ -185,6 +207,10 @@
             <p>Please enter full-screen mode to attempt this quiz.</p>
             <button id="fullscreen-button" onclick="requestFullScreen()">Enable Full-Screen Mode</button>
         </div>
+    </div>
+    <div id="videoContainer">
+        <video id="video" autoplay></video>
+        <div id="detectedObjects"></div>
     </div>
     <div class="header">
         <h1>Python Online Assessment</h1>
@@ -539,6 +565,130 @@ window.addEventListener('keydown', function (e) {
         alert("Refreshing the page is not allowed.");
     }
 });
+
+const video = document.getElementById('video');
+const detectedObjectsContainer = document.getElementById('detectedObjects');
+
+// Access the webcam
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        video.srcObject = stream;
+    })
+    .catch(error => {
+        console.error('Error accessing webcam: ', error);
+    });
+
+// Function to send frames to the server for object detection
+function sendFrameToServer(frame) {
+    const canvas = document.createElement('canvas');
+    canvas.width = frame.width;
+    canvas.height = frame.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(frame, 0, 0);
+
+    canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('image', blob, 'frame.jpg');
+
+        // Send the image blob to the server using fetch
+        fetch('/detect_objects/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateDetectedObjects(data.objects);
+        })
+        .catch(error => {
+            console.error('Error sending frame to server: ', error);
+        });
+    });
+}
+
+function updateDetectedObjects(objects) {
+    detectedObjectsContainer.innerHTML = ''; // Clear previous objects
+
+    if (objects && objects.length > 0) {
+        objects.forEach(obj => {
+            const objectElement = document.createElement('div');
+            objectElement.innerHTML = `${obj.label}: ${obj.confidence}%`;
+            detectedObjectsContainer.appendChild(objectElement);
+        });
+
+        // Send the detected objects (labels) to the server to be stored in the session
+        const labels = objects.map(obj => obj.label);
+        sendDetectedLabelsToServer(labels);
+    }
+}
+
+// Function to send detected labels to the server
+function sendDetectedLabelsToServer(labels) {
+    fetch('/store_detected_labels/', {
+        method: 'POST',
+        body: JSON.stringify({ labels: labels }),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .catch(error => {
+        console.error('Error sending detected labels to server: ', error);
+    });
+}
+
+
+// Function to capture a frame from the video
+// Function to capture a frame from the video
+function captureFrame() {
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        sendFrameToServer(canvas);
+    }
+}
+
+
+// Capture frames every 100 milliseconds (adjust as necessary)
+setInterval(captureFrame, 100);
+// Request microphone access
+function requestMicrophoneAndCameraAccess() {
+    // Check if the browser supports getUserMedia
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Request access to both microphone and camera
+        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+            .then(function (stream) {
+                // Access granted, microphone and camera are active
+                console.log('Microphone and camera access granted');
+                
+                // Create an audio element but don't play it to mute the speakers
+                const audioElement = document.createElement('audio');
+                audioElement.srcObject = stream;
+                audioElement.muted = true; // Mute the speakers (no audio playback)
+                
+                // Optionally, create a video element but don't display the camera feed
+                const videoElement = document.createElement('video');
+                videoElement.srcObject = stream;
+                videoElement.style.display = 'none'; // Hide the video feed
+                
+                // Optionally, you can stop the video stream to disable the camera completely
+                // stream.getVideoTracks().forEach(track => track.stop());
+                
+            })
+            .catch(function (error) {
+                // Access denied or error occurred
+                console.error('Error accessing microphone or camera: ', error);
+                alert('Please allow microphone and camera access to use this feature.');
+            });
+    } else {
+        console.error('getUserMedia not supported in this browser.');
+    }
+}
+
+// Example usage
+requestMicrophoneAndCameraAccess();
 
 
     </script>
